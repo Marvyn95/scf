@@ -11,9 +11,9 @@ app = Flask(__name__)
 app.secret_key = config['SECRET_KEY']
 
 #connect to MongoDB
-# client = pymongo.MongoClient(config['MONGO_URI'])
-# db = client.simple_books_v2_db
+client = pymongo.MongoClient(config['MONGO_URI'])
+db = client.scf_v2_db
 
-# bcrypt = Bcrypt()
+bcrypt = Bcrypt()
 
 from scf_v2 import routes
