@@ -10,138 +10,234 @@
 </head>
 <body class="bg-light d-flex justify-content-center align-items-center vh-100">
 
-  <!-- Main Card -->
-  <div class="card bg-light bg-opacity-10 shadow-lg rounded-4 mx-4 my-4" style="width: 100%; height: calc(100vh - 2rem);">
+  <div class="card bg-light bg-opacity-10 shadow-lg rounded-4 mx-4 my-4 w-100" style="height: calc(100vh - 2rem);">
     <div class="card-body d-flex p-3 h-100">
 
-      <!-- Sidebar Card -->
+      <!-- Sidebar -->
       <div class="card shadow-lg rounded-4 p-3 d-flex flex-column justify-content-between" style="width: 250px; height: 100%; background-color: #0d0cb5;">
-        <!-- Top Section: Heading & Links -->
         <div>
           <h4 class="fw-bold d-flex align-items-center mb-5 text-white">
             <i class="bi bi-people-fill me-2"></i> SCF
           </h4>
 
-          <!-- Sidebar Links as Tab Triggers -->
           <ul class="nav flex-column nav-pills" id="sidebarTabs" role="tablist">
-            <li class="nav-item mb-2" role="presentation">
-              <button class="nav-link text-white active d-flex align-items-center" id="home-tab-btn" data-bs-toggle="pill" data-bs-target="#home-tab" type="button" role="tab">
+            <li class="nav-item mb-2">
+              <button class="nav-link text-white active d-flex align-items-center" id="home-tab-btn" data-bs-toggle="pill" data-bs-target="#home-tab" type="button">
                 <i class="bi bi-house-fill me-2"></i> Home
               </button>
             </li>
-            <li class="nav-item mb-2" role="presentation">
-              <button class="nav-link text-white d-flex align-items-center" id="profile-tab-btn" data-bs-toggle="pill" data-bs-target="#profile-tab" type="button" role="tab">
+            <li class="nav-item mb-2">
+              <button class="nav-link text-white d-flex align-items-center" id="profile-tab-btn" data-bs-toggle="pill" data-bs-target="#profile-tab" type="button">
                 <i class="bi bi-person-circle me-2"></i> Profile
               </button>
             </li>
-            <li class="nav-item mb-2" role="presentation">
-            <button class="nav-link text-white d-flex align-items-center" id="umbrellas-tab-btn" data-bs-toggle="pill" data-bs-target="#umbrellas-tab" type="button" role="tab">
+            <li class="nav-item mb-2">
+              <button class="nav-link text-white d-flex align-items-center" id="umbrellas-tab-btn" data-bs-toggle="pill" data-bs-target="#umbrellas-tab" type="button">
                 <i class="bi bi-building-fill me-2"></i> Umbrellas
-            </button>
+              </button>
             </li>
-            <li class="nav-item mb-2" role="presentation">
-              <button class="nav-link text-white d-flex align-items-center" id="users-tab-btn" data-bs-toggle="pill" data-bs-target="#users-tab" type="button" role="tab">
+            <li class="nav-item mb-2">
+              <button class="nav-link text-white d-flex align-items-center" id="users-tab-btn" data-bs-toggle="pill" data-bs-target="#users-tab" type="button">
                 <i class="bi bi-person-fill me-2"></i> Users
               </button>
             </li>
-            <li class="nav-item mb-2" role="presentation">
-              <button class="nav-link text-white d-flex align-items-center" id="customers-tab-btn" data-bs-toggle="pill" data-bs-target="#customers-tab" type="button" role="tab">
+            <li class="nav-item mb-2">
+              <button class="nav-link text-white d-flex align-items-center" id="customers-tab-btn" data-bs-toggle="pill" data-bs-target="#customers-tab" type="button">
                 <i class="bi bi-people-fill me-2"></i> Customers
               </button>
             </li>
           </ul>
         </div>
-
-<!-- Bottom Section: Logout Link -->
-<div class="mt-3">
-  <a href="{{ url_for('logout') }}" class="btn btn-light w-100 d-flex align-items-center justify-content-center">
-    <i class="bi bi-box-arrow-right me-2"></i> Logout
-  </a>
-</div>
-
+        <div class="mt-3">
+          <a href="{{ url_for('logout') }}" class="btn btn-light w-100 d-flex align-items-center justify-content-center">
+            <i class="bi bi-box-arrow-right me-2"></i> Logout
+          </a>
+        </div>
       </div>
 
-      <!-- Main Content Area -->
+      <!-- Main Content -->
       <div class="flex-grow-1 d-flex flex-column ms-3 h-100">
 
-<!-- Top User Info Card -->
-<div class="card mb-3 shadow p-4 rounded-4 bg-secondary-subtle" style="min-height: 120px;">
-  <div class="row g-3 align-items-center">
+        <!-- User Profile Summary Section -->
+        <div class="row g-3 mb-3">
+          <!-- Left Card -->
+          <div class="col-md-6">
+            <div class="card shadow-sm border border-secondary-subtle rounded-4 bg-secondary-subtle px-3 py-2 small">
+              <div class="row mb-2">
+                <div class="col-5 text-primary fw-semibold">User Name:</div>
+                <div class="col-7 fw-bold">{{user.first_name}} {{user.last_name}}</div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-5 text-primary fw-semibold"><i class="bi bi-envelope-fill me-1"></i>Email:</div>
+                <div class="col-7 fw-bold">{{user.email}}</div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-5 text-primary fw-semibold"><i class="bi bi-shield-lock-fill me-1"></i>Role:</div>
+                <div class="col-7 fw-bold">{{user.role}}</div>
+              </div>
+            </div>
+          </div>
 
-    <!-- User Details -->
-    <div class="col">
-      <div class="d-flex flex-wrap justify-content-between align-items-center">
-
-        <!-- Name & Status -->
-        <div class="mb-2">
-          <div class="fw-semibold small text-primary">User Name</div>
-          <div class="fw-bold d-flex align-items-center">
-            Marvin Luyombya
+          <!-- Right Card -->
+          <div class="col-md-6">
+            <div class="card shadow-sm border border-secondary-subtle rounded-4 bg-secondary-subtle px-3 py-2 small">
+              <div class="row mb-2">
+                <div class="col-6 text-primary fw-semibold"><i class="bi bi-building me-1"></i>Umbrella:</div>
+                <div class="col-6 fw-bold">{{user.umbrella_name}}</div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-6 text-primary fw-semibold"><i class="bi bi-calendar-fill me-1"></i>Date:</div>
+                <div class="col-6 fw-bold">{{ date.strftime('%A, %d %B %Y') }}</div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Role -->
-        <div class="mb-2">
-          <div class="fw-semibold small text-primary">
-            <i class="bi bi-shield-lock-fill me-1"></i> Role
-          </div>
-          <div class="fw-bold">Admin</div>
-        </div>
-
-        <!-- Umbrella Authority -->
-        <div class="mb-2">
-          <div class="fw-semibold small text-primary">
-            <i class="bi bi-building me-1"></i> Umbrella Authority
-          </div>
-          <div class="fw-bold">mwUws</div>
-        </div>
-
-        <!-- Email -->
-        <div class="mb-2">
-          <div class="fw-semibold small text-primary">
-            <i class="bi bi-envelope-fill me-1"></i> Email
-          </div>
-          <div class="fw-bold">marvin@example.com</div>
-        </div>
-
-        <!-- Current Date -->
-        <div class="mb-2">
-          <div class="fw-semibold small text-primary">
-            <i class="bi bi-calendar-fill me-1"></i> Date
-          </div>
-          <div class="fw-bold">2025-08-14</div>
-        </div>
-
-      </div>
-    </div>
-
-  </div>
-</div>
-
-
-        <!-- Bottom Dynamic Content Card -->
-        <div class="card flex-grow-1 shadow p-3 rounded-4 bg-secondary-subtle">
+        <!-- Tabs Content Card -->
+        <div class="card flex-grow-1 shadow-sm p-3 rounded-4 bg-secondary-subtle">
           <div class="tab-content h-100">
 
+            <!-- Home Tab -->
             <div class="tab-pane fade show active" id="home-tab" role="tabpanel">
               <h5 class="fw-bold mb-3">Home</h5>
               <p>Welcome to the SCF System Dashboard. This is the home tab content.</p>
             </div>
 
+            <!-- Profile Tab -->
             <div class="tab-pane fade" id="profile-tab" role="tabpanel">
               <h5 class="fw-bold mb-3">Profile</h5>
-              <p>User profile information, settings, and preferences will appear here.</p>
-            </div>
-            <div class="tab-pane fade" id="umbrellas-tab" role="tabpanel">
-            <h5 class="fw-bold mb-3">Umbrellas</h5>
-            <p>Manage umbrella authorities, view assigned customers, and configure settings here.</p>
+
+              <!-- User Details List -->
+              <ul class="list-group mb-4">
+                <li class="list-group-item d-flex justify-content-between align-items-center py-2 bg-dark-subtle my-1 rounded-2">
+                  <div class="d-flex flex-column gap-1">
+                    <div class="fw-bold text-dark">First Name:</div>
+                    <div class="text-primary">{{ user.first_name }}</div>
+                  </div>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center py-2 bg-dark-subtle my-1 rounded-2">
+                  <div class="d-flex flex-column gap-1">
+                    <div class="fw-bold text-dark">Last Name:</div>
+                    <div class="text-primary">{{ user.last_name }}</div>
+                  </div>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center py-2 bg-dark-subtle my-1 rounded-2">
+                  <div class="d-flex flex-column gap-1">
+                    <div class="fw-bold text-dark">Email:</div>
+                    <div class="text-primary">{{ user.email }}</div>
+                  </div>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center py-2 bg-dark-subtle my-1 rounded-2">
+                  <div class="d-flex flex-column gap-1">
+                    <div class="fw-bold text-dark">Role:</div>
+                    <div class="text-primary">{{ user.role }}</div>
+                  </div>
+                </li>
+              </ul>
+
+              <!-- Action Buttons -->
+              <div class="d-flex justify-content-end gap-2">
+                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                  Edit Profile
+                </button>
+                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                  Change Password
+                </button>
+              </div>
             </div>
 
+            <!-- Umbrellas Tab -->
+            <div class="tab-pane fade" id="umbrellas-tab" role="tabpanel">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                  <h5 class="fw-bold mb-1">Umbrellas</h5>
+                  <p class="mb-0">Manage umbrella authorities</p>
+                </div>
+                <div>
+                  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUmbrellaModal">
+                    <i class="bi bi-plus-lg me-1"></i> Add Umbrella
+                  </button>
+                </div>
+              </div>
+
+              <div class="overflow-auto" style="max-height: 60vh;">
+                <div class="d-flex flex-column gap-2">
+                  {% for umbrella in umbrellas %}
+    <div class="card shadow-sm border border-secondary-subtle bg-dark-subtle mb-1">
+      <div class="card-body d-flex justify-content-between align-items-center py-2 px-2">
+        <h6 class="mb-0 fw-semibold text-truncate" style="max-width: 60%; font-size: 0.85rem;">
+          {{ umbrella.umbrella_name }}
+        </h6>
+        <div class="d-flex gap-1">
+          <button class="btn btn-outline-primary btn-sm p-1" data-bs-toggle="modal" data-bs-target="#editModal-{{ umbrella._id }}">
+            <i class="bi bi-pencil fs-6"></i>
+          </button>
+          <button class="btn btn-outline-danger btn-sm p-1" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ umbrella._id }}">
+            <i class="bi bi-trash fs-6"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+
+                  <!-- Edit Modal -->
+                  <div class="modal fade" id="editModal-{{ umbrella._id }}" tabindex="-1" aria-labelledby="editModalLabel-{{ umbrella._id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <form method="POST" action="{{ url_for('edit_umbrella') }}">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="editModalLabel-{{ umbrella._id }}">Edit Umbrella</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <input type="hidden" name="umbrella_id" value="{{ umbrella._id }}">
+                            <div class="mb-3">
+                              <label for="umbrella_name_{{ umbrella._id }}" class="form-label">Umbrella Name</label>
+                              <input type="text" class="form-control" id="umbrella_name_{{ umbrella._id }}" name="umbrella_name" value="{{ umbrella.umbrella_name }}">
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Delete Modal -->
+                  <div class="modal fade" id="deleteModal-{{ umbrella._id }}" tabindex="-1" aria-labelledby="deleteModalLabel-{{ umbrella._id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <form method="POST" action="{{ url_for('delete_umbrella') }}">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel-{{ umbrella._id }}">Delete Umbrella</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <input type="hidden" name="umbrella_id" value="{{ umbrella._id }}">
+                            <p>Are you sure you want to delete <strong>{{ umbrella.umbrella_name }}</strong>?</p>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+
+            <!-- Users Tab -->
             <div class="tab-pane fade" id="users-tab" role="tabpanel">
               <h5 class="fw-bold mb-3">Users</h5>
               <p>Manage system users, their roles, and permissions here.</p>
             </div>
 
+            <!-- Customers Tab -->
             <div class="tab-pane fade" id="customers-tab" role="tabpanel">
               <h5 class="fw-bold mb-3">Customers</h5>
               <p>View customer details, activity, and interaction history here.</p>
@@ -151,9 +247,147 @@
         </div>
 
       </div>
-
     </div>
   </div>
+
+<!-- Edit Profile Modal -->
+<div class="modal fade" id="editProfileModal" tabindex="-1">
+  <div class="modal-dialog">
+    <form method="POST" action="{{ url_for('update_profile') }}">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Profile</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+
+          <!-- Hidden user ID -->
+          <input type="hidden" name="user_id" value="{{ user._id }}">
+
+          <div class="mb-2">
+            <label class="form-label">First Name</label>
+            <input type="text" name="first_name" class="form-control" value="{{ user.first_name }}" required>
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Last Name</label>
+            <input type="text" name="last_name" class="form-control" value="{{ user.last_name }}" required>
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control" value="{{ user.email }}" required>
+          </div>
+
+<div class="mb-2">
+  <label class="form-label">Role</label>
+  <select name="role" class="form-select" required {% if user.role != 'admin' %}disabled{% endif %}>
+    <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+    <option value="manager" {% if user.role == 'manager' %}selected{% endif %}>Manager</option>
+    <option value="cluster_manager" {% if user.role == 'cluster_manager' %}selected{% endif %}>Cluster Manager</option>
+    <option value="commercial_officer" {% if user.role == 'commercial_officer' %}selected{% endif %}>Commercial Officer</option>
+    <option value="billing_officer" {% if user.role == 'billing_officer' %}selected{% endif %}>Billing Officer</option>
+    <option value="project_officer" {% if user.role == 'project_officer' %}selected{% endif %}>Project Officer</option>
+    <option value="area_manager" {% if user.role == 'area_manager' %}selected{% endif %}>Area Manager</option>
+    <option value="scheme_manager" {% if user.role == 'scheme_manager' %}selected{% endif %}>Scheme Manager</option>
+    <option value="plumber" {% if user.role == 'plumber' %}selected{% endif %}>Plumber</option>
+    <option value="me_officer" {% if user.role == 'me_officer' %}selected{% endif %}>M&E Officer</option>
+  </select>
+</div>
+
+
+<div class="mb-2">
+  <label class="form-label">Umbrella Authority</label>
+  <select name="umbrella_id" class="form-select" required {% if user.role|string != 'admin' %}disabled{% endif %}>
+    <!-- Default option -->
+    <option value="" {% if not user.umbrella_id|string %}selected{% endif %}>Select Umbrella</option>
+    {% for umbrella in umbrellas %}
+      <option value="{{ umbrella._id }}" {% if user.umbrella_id|string == umbrella._id|string %}selected{% endif %}>
+        {{ umbrella.umbrella_name }}
+      </option>
+    {% endfor %}
+  </select>
+</div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Change Password Modal -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1">
+  <div class="modal-dialog">
+    <form method="POST" action="{{ url_for('change_password') }}">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Change Password</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+
+          <!-- Hidden user ID -->
+          <input type="hidden" name="user_id" value="{{ user._id }}">
+          <input type="password" name="new_password" class="form-control mb-2" placeholder="New Password" required>
+          <input type="password" name="confirm_password" class="form-control" placeholder="Confirm New Password" required>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-warning">Update Password</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+  <!-- Add Umbrella Modal -->
+  <div class="modal fade" id="addUmbrellaModal" tabindex="-1" aria-labelledby="addUmbrellaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form method="POST" action="{{ url_for('add_umbrella') }}">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addUmbrellaModalLabel">Add New Umbrella</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="new_umbrella_name" class="form-label">Umbrella Name</label>
+              <input type="text" class="form-control" id="new_umbrella_name" name="umbrella_name" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success">Add Umbrella</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const tabButtons = document.querySelectorAll('#sidebarTabs button[data-bs-toggle="pill"]');
+  const activeTabId = localStorage.getItem('activeTab');
+
+  if (activeTabId) {
+    // Find the button using the exact stored id
+    const triggerEl = document.getElementById(activeTabId);
+    if (triggerEl) {
+      const tab = new bootstrap.Tab(triggerEl);
+      tab.show();
+    }
+  }
+
+  tabButtons.forEach(btn => {
+    btn.addEventListener('shown.bs.tab', function (event) {
+      // Store the full button id
+      localStorage.setItem('activeTab', event.target.id);
+    });
+  });
+});
+</script>
+
 
 </body>
 </html>

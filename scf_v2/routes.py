@@ -2,10 +2,19 @@
 from scf_v2 import app, db, bcrypt
 from flask import render_template, flash, request, url_for, session, redirect, send_file
 import json
+from bson.objectid import ObjectId
+import datetime
 
 @app.route('/home', methods=["GET", "POST"])
 def home():
-    return render_template("home.html")
+    user = db.Users.find_one({"_id": ObjectId(session.get("userid"))})
+    umbrellas = list(db.Umbrellas.find())
+    user['umbrella_name'] = db.Umbrellas.find_one({'_id': ObjectId(user['umbrella_id'])})['umbrella_name'] if user['umbrella_id'] != "" else None
+    
+    return render_template("home.html",
+                           user = user,
+                           umbrellas = umbrellas,
+                           date = datetime.datetime.today())
 
 
 @app.route('/', methods=["GET", "POST"])
@@ -60,7 +69,7 @@ def register():
         db.Users.insert_one({
             "first_name": form_info["first_name"].strip(),
             "last_name": form_info["last_name"].strip(),
-            "email": form_info["email"],
+            "email": form_info["email"].strip(),
             "password": bcrypt.generate_password_hash(form_info["password"].strip()).decode("utf-8"),
             "role": "Administrator",
             "active_status": True
@@ -69,5 +78,97 @@ def register():
         return redirect(url_for("login"))
     else:
         return render_template("register.html")
+    
 
+@app.route('/add_umbrella', methods=["POST"])
+def add_umbrella():
+    form_info = request.form
+    existing_umbrella = db.Umbrellas.find_one({"umbrella_name": form_info['umbrella_name'].strip()})
+    
+    if existing_umbrella != None:
+        flash('umbrella already exists!', 'warning')
+        return redirect(url_for("home"))
+    
+    db.Umbrellas.insert_one({
+        "umbrella_name": form_info["umbrella_name"].strip()
+        })
+    flash('umbrella added successfully!', 'success')
+    return redirect(url_for("home"))
+
+
+@app.route('/edit_umbrella', methods=["POST"])
+def edit_umbrella():
+    form_info = request.form
+    existing_umbrella = db.Umbrellas.find_one({"umbrella_name": form_info['umbrella_name'].strip()})
+    if existing_umbrella != None:
+        flash('umbrella already exists!', 'warning')
+        return redirect(url_for("home"))
+
+    db.Umbrellas.update_one({"_id": ObjectId(form_info['umbrella_id'])}, {
+        "$set": {"umbrella_name": form_info["umbrella_name"].strip()}
+    })
+    flash('umbrella info edited successfully!', 'success')
+    return redirect(url_for("home"))
+
+
+@app.route('/delete_umbrella', methods=["POST"])
+def delete_umbrella():
+    form_info = request.form
+    existing_users = list(db.Users.find({"umbrella_id": ObjectId(form_info['umbrella_id'])}))
+    if len(existing_users) != 0:
+        flash('umbrella has registered employees!', 'danger')
+        return redirect(url_for("home"))
+    db.Umbrellas.delete_one({"_id": ObjectId(form_info['umbrella_id'])})
+    flash('umbrella has been deleted successfully!', 'success')
+    return redirect(url_for("home"))
+
+
+
+@app.route('/update_profile', methods=["POST"])
+def update_profile():
+    form_info = request.form
+    user_info = db.Users.find_one({"_id": ObjectId(form_info['user_id'])})
+    
+    if form_info['email'] != user_info['email'] and db.Users.find_one({'email': form_info['email']}) != None:
+        flash('profile update failed, check email!', 'success')
+        return redirect(url_for("home"))
+
+    db.Users.update_one({"_id": ObjectId(form_info['user_id'])}, {
+        "$set": {"first_name": form_info["first_name"].strip(),
+                "last_name": form_info["last_name"].strip(),
+                "email": form_info["email"].strip(),
+                "umbrella_id": form_info["umbrella_id"].strip()}
+    })
+    flash('profile update successful!', 'success')
+    return redirect(url_for("home"))
+
+@app.route('/change_password', methods=["POST"])
+def change_password():
+    form_info = request.form
+    if form_info['new_password'] != form_info['confirm_password']:
+        flash('passwords dont match', 'danger')
+        return redirect(url_for("home"))
+
+    db.Users.update_one({"_id": ObjectId(form_info['user_id'])}, {
+        "$set": {"password": bcrypt.generate_password_hash(form_info["new_password"].strip()).decode("utf-8")}
+    })
+    flash('password changed successfully!', 'success')
+    return redirect(url_for("home"))
+
+
+
+
+@app.route('/edit_user', methods=["POST"])
+def edit_user():
+    form_info = request.form
+    flash('user added successfully!', 'success')
+    return redirect(url_for("home"))
+
+
+@app.route('/add_customer', methods=["POST"])
+def add_customer():
+    form_info = request.form
+    flash('user added successfully!', 'success')
+    return redirect(url_for("home"))
+    
 
