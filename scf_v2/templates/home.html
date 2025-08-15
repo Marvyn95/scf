@@ -83,7 +83,7 @@
             <div class="card shadow-sm border border-secondary-subtle rounded-4 bg-secondary-subtle px-3 py-2 small">
               <div class="row mb-2">
                 <div class="col-6 text-primary fw-semibold"><i class="bi bi-building me-1"></i>Umbrella:</div>
-                <div class="col-6 fw-bold">{{user.umbrella_name}}</div>
+                <div class="col-6 fw-bold">{{user.umbrella}}</div>
               </div>
               <div class="row mb-2">
                 <div class="col-6 text-primary fw-semibold"><i class="bi bi-calendar-fill me-1"></i>Date:</div>
@@ -166,7 +166,7 @@
     <div class="card shadow-sm border border-secondary-subtle bg-dark-subtle mb-1">
       <div class="card-body d-flex justify-content-between align-items-center py-2 px-2">
         <h6 class="mb-0 fw-semibold text-truncate" style="max-width: 60%; font-size: 0.85rem;">
-          {{ umbrella.umbrella_name }}
+          {{ umbrella.umbrella }}
         </h6>
         <div class="d-flex gap-1">
           <button class="btn btn-outline-primary btn-sm p-1" data-bs-toggle="modal" data-bs-target="#editModal-{{ umbrella._id }}">
@@ -192,8 +192,8 @@
                           <div class="modal-body">
                             <input type="hidden" name="umbrella_id" value="{{ umbrella._id }}">
                             <div class="mb-3">
-                              <label for="umbrella_name_{{ umbrella._id }}" class="form-label">Umbrella Name</label>
-                              <input type="text" class="form-control" id="umbrella_name_{{ umbrella._id }}" name="umbrella_name" value="{{ umbrella.umbrella_name }}">
+                              <label for="umbrella_{{ umbrella._id }}" class="form-label">Umbrella Name</label>
+                              <input type="text" class="form-control" id="umbrella_{{ umbrella._id }}" name="umbrella" value="{{ umbrella.umbrella }}">
                             </div>
                           </div>
                           <div class="modal-footer">
@@ -216,7 +216,7 @@
                           </div>
                           <div class="modal-body">
                             <input type="hidden" name="umbrella_id" value="{{ umbrella._id }}">
-                            <p>Are you sure you want to delete <strong>{{ umbrella.umbrella_name }}</strong>?</p>
+                            <p>Are you sure you want to delete <strong>{{ umbrella.umbrella }}</strong>?</p>
                           </div>
                           <div class="modal-footer">
                             <button type="submit" class="btn btn-danger">Delete</button>
@@ -231,11 +231,216 @@
               </div>
             </div>
 
-            <!-- Users Tab -->
-            <div class="tab-pane fade" id="users-tab" role="tabpanel">
-              <h5 class="fw-bold mb-3">Users</h5>
-              <p>Manage system users, their roles, and permissions here.</p>
-            </div>
+<!-- Users Tab -->
+<div class="tab-pane fade" id="users-tab" role="tabpanel" style="padding: 0.5rem;">
+
+  <!-- Top Section: Add User Button -->
+  <div class="d-flex justify-content-start mb-3">
+    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addUserModal">
+      <i class="bi bi-plus-lg"></i> Add User
+    </button>
+  </div>
+
+  <!-- Users Table -->
+  <div class="table-responsive">
+    <table class="table table-secondary table-hover table-sm align-middle" style="font-size:0.8rem;">
+      <thead class="table-light">
+        <tr class="table-primary">
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Umbrella</th>
+          <th>Scheme</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+<tr class="bg-dark-subtle my-1">
+  <td>{{ u.first_name }}</td>
+  <td>{{ u.last_name }}</td>
+  <td>{{ u.email }}</td>
+  <td>{{ u.role }}</td>
+  <td>{{ u.umbrella or '-' }}</td>
+  <td>{{ u.scheme or '-' }}</td>
+  <td>
+    <div class="d-flex gap-1">
+      <!-- Edit Button -->
+      <button class="btn btn-outline-primary btn-sm p-1" data-bs-toggle="modal" data-bs-target="#editUserModal-{{ u._id }}">
+        <i class="bi bi-pencil fs-6"></i>
+      </button>
+
+      <!-- Delete Button -->
+      <button class="btn btn-outline-danger btn-sm p-1" data-bs-toggle="modal" data-bs-target="#deleteUserModal-{{ u._id }}">
+        <i class="bi bi-trash fs-6"></i>
+      </button>
+
+      <!-- Change Password Button -->
+      <button class="btn btn-outline-warning btn-sm p-1" data-bs-toggle="modal" data-bs-target="#changePasswordModal-{{ u._id }}">
+        <i class="bi bi-key fs-6"></i>
+      </button>
+    </div>
+  </td>
+</tr>
+
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal-{{ u._id }}" tabindex="-1">
+  <div class="modal-dialog">
+    <form method="POST" action="{{ url_for('update_user') }}">
+      <input type="hidden" name="user_id" value="{{ u._id }}">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit User</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="text" name="first_name" class="form-control mb-2" value="{{ u.first_name }}" required>
+          <input type="text" name="last_name" class="form-control mb-2" value="{{ u.last_name }}" required>
+          <input type="email" name="email" class="form-control mb-2" value="{{ u.email }}" required>
+
+          <!-- Role -->
+          <select name="role" class="form-select mb-2" required>
+            <option value="admin" {% if u.role == 'admin' %}selected{% endif %}>Admin</option>
+            <option value="manager" {% if u.role == 'manager' %}selected{% endif %}>Manager</option>
+            <option value="cluster_manager" {% if u.role == 'cluster_manager' %}selected{% endif %}>Cluster Manager</option>
+            <option value="scheme_manager" {% if u.role == 'scheme_manager' %}selected{% endif %}>Scheme Manager</option>
+            <option value="plumber" {% if u.role == 'plumber' %}selected{% endif %}>Plumber</option>
+            <option value="me_officer" {% if u.role == 'me_officer' %}selected{% endif %}>M&E Officer</option>
+          </select>
+
+<!-- Umbrella Authority -->
+<select name="umbrella_id" class="form-select mb-2">
+  <option value="" {% if not u.umbrella %}selected{% endif %}>Select Umbrella</option>
+  {% for umbrella in umbrellas %}
+    <option value="{{ umbrella._id }}" {% if u.umbrella_id|string == umbrella._id|string %}selected{% endif %}>
+      {{ umbrella.umbrella }}
+    </option>
+  {% endfor %}
+</select>
+
+<!-- Scheme (optional) -->
+<select name="scheme_id" class="form-select mb-2">
+  <option value="" {% if not u.scheme %}selected{% endif %}>Select Scheme</option>
+  {% for scheme in schemes %}
+    <option value="{{ scheme._id }}" {% if u.scheme_id|string == scheme._id|string %}selected{% endif %}>
+      {{ scheme.scheme }}
+    </option>
+  {% endfor %}
+</select>
+
+
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Delete User Modal -->
+<div class="modal fade" id="deleteUserModal-{{ u._id }}" tabindex="-1">
+  <div class="modal-dialog">
+    <form method="POST" action="{{ url_for('delete_user') }}">
+      <input type="hidden" name="user_id" value="{{ u._id }}">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Delete User</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete <strong>{{ u.first_name }} {{ u.last_name }}</strong>?
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-danger">Delete</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Change Password Modal -->
+<div class="modal fade" id="changePasswordModal-{{ u._id }}" tabindex="-1">
+  <div class="modal-dialog">
+    <form method="POST" action="{{ url_for('change_user_password') }}">
+      <input type="hidden" name="user_id" value="{{ u._id }}">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Change Password</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="password" name="new_password" class="form-control mb-2" placeholder="New Password" required>
+          <input type="password" name="confirm_password" class="form-control" placeholder="Confirm Password" required>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-warning">Update Password</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endfor %}
+
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Add User Modal -->
+<div class="modal fade" id="addUserModal" tabindex="-1">
+  <div class="modal-dialog">
+    <form method="POST" action="{{ url_for('add_user') }}">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add User</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="text" name="first_name" class="form-control mb-2" placeholder="First Name" required>
+          <input type="text" name="last_name" class="form-control mb-2" placeholder="Last Name" required>
+          <input type="email" name="email" class="form-control mb-2" placeholder="Email" required>
+          <input type="password" name="password" class="form-control mb-2" placeholder="Password" required>
+
+          <!-- Role (Admin-only editable) -->
+          <select name="role" class="form-select mb-2" required {% if user.role|string != 'admin' %}disabled{% endif %}>
+            <option value="" selected disabled>Select Role</option>
+            <option value="admin">Admin</option>
+            <option value="manager">Manager</option>
+            <option value="cluster_manager">Cluster Manager</option>
+            <option value="scheme_manager">Scheme Manager</option>
+            <option value="plumber">Plumber</option>
+            <option value="me_officer">M&E Officer</option>
+          </select>
+
+          <!-- Umbrella Authority (Admin-only editable) -->
+          <select name="umbrella_id" class="form-select mb-2" required {% if user.role|string != 'admin' %}disabled{% endif %}>
+            <option value="" selected disabled>Select Umbrella</option>
+            {% for umbrella in umbrellas %}
+              <option value="{{ umbrella._id }}">{{ umbrella.umbrella }}</option>
+            {% endfor %}
+          </select>
+
+          <!-- Scheme (optional) -->
+          <select name="scheme_id" class="form-select mb-2">
+            <option value="" selected>Select Scheme</option>
+            {% for scheme in schemes %}
+              <option value="{{ scheme._id }}">{{ scheme.scheme_name }}</option>
+            {% endfor %}
+          </select>
+
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Add User</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
 
             <!-- Customers Tab -->
             <div class="tab-pane fade" id="customers-tab" role="tabpanel">
@@ -301,7 +506,7 @@
     <option value="" {% if not user.umbrella_id|string %}selected{% endif %}>Select Umbrella</option>
     {% for umbrella in umbrellas %}
       <option value="{{ umbrella._id }}" {% if user.umbrella_id|string == umbrella._id|string %}selected{% endif %}>
-        {{ umbrella.umbrella_name }}
+        {{ umbrella.umbrella }}
       </option>
     {% endfor %}
   </select>
@@ -352,8 +557,8 @@
           </div>
           <div class="modal-body">
             <div class="mb-3">
-              <label for="new_umbrella_name" class="form-label">Umbrella Name</label>
-              <input type="text" class="form-control" id="new_umbrella_name" name="umbrella_name" required>
+              <label for="new_umbrella" class="form-label">Umbrella Name</label>
+              <input type="text" class="form-control" id="new_umbrella" name="umbrella" required>
             </div>
           </div>
           <div class="modal-footer">
