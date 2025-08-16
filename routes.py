@@ -14,7 +14,7 @@ def home():
     umbrellas = list(db.Umbrellas.find())
     users = list(db.Users.find())
     schemes = list(db.Schemes.find())
-    villages = list(db.Villages.find())
+    villages = list(db.Villages.find({}, {"village": 1, "district": 1}))
     customers = list(db.Customers.find())
 
     # adding schemes and umbrellas if exists
@@ -266,4 +266,29 @@ def add_customer():
         "wealth_assessment_form": save_file(wealth_assessment_form)
     })
     flash('customer added successfully!', 'success')
+    return redirect(url_for("home"))
+
+@app.route('/edit_customer', methods=["POST"])
+def edit_customer():
+    form_info = request.form
+
+    db.Customers.update_one({"_id": ObjectId(form_info['customer_id'])}, {
+        "$set": {
+            "customer_name": form_info['customer_name'],
+            "contact": form_info['contact'],
+            "scheme_id": form_info['scheme_id'],
+            "village_id": form_info['village_id'],
+            "application_id": form_info['application_id']
+        }
+    })
+    flash('customer updated successfully!', 'success')
+    return redirect(url_for("home"))
+
+@app.route('/delete_customer', methods=["POST"])
+def delete_customer():
+    form_info = request.form
+    db.Customers.delete_one({
+        "_id": ObjectId(form_info['customer_id'])
+    })
+    flash('customer deleted successfully!', 'success')
     return redirect(url_for("home"))
