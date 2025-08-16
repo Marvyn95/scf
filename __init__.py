@@ -16,4 +16,4 @@ db = client.scf_v2_db
 
 bcrypt = Bcrypt()
 
-from scf_v2 import routes
+import routes

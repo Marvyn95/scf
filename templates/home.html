@@ -441,12 +441,243 @@
   </div>
 </div>
 
+<!-- Customers Tab -->
+<div class="tab-pane fade" id="customers-tab" role="tabpanel">
 
-            <!-- Customers Tab -->
-            <div class="tab-pane fade" id="customers-tab" role="tabpanel">
-              <h5 class="fw-bold mb-3">Customers</h5>
-              <p>View customer details, activity, and interaction history here.</p>
+  <!-- Header with Add Button -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="fw-bold mb-0">Customers</h5>
+    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
+      <i class="bi bi-plus-circle me-1"></i> Add New Customer
+    </button>
+  </div>
+
+  <!-- Add Customer Modal -->
+  <div class="modal fade" id="addCustomerModal" tabindex="-1" aria-labelledby="addCustomerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <form method="POST" enctype="multipart/form-data" action="{{url_for('add_customer')}}">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addCustomerModalLabel">Add New Customer</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Customer Name *</label>
+              <input type="text" class="form-control" name="customer_name" required>
             </div>
+            <div class="col-md-6">
+              <label class="form-label">Contact *</label>
+              <input type="text" class="form-control" name="contact" required>
+            </div>
+<div class="col-md-6">
+  <label class="form-label">Scheme *</label>
+  <select class="form-select" name="scheme_id" required>
+    <option value="">Select Scheme</option>
+    {% for s in schemes %}
+      <option value="{{ s._id }}">{{ s.scheme }}</option>
+    {% endfor %}
+  </select>
+</div>
+<div class="col-md-6">
+  <label class="form-label">Village</label>
+  <select class="form-select" name="village_id">
+    <option value="">Select Village</option>
+    {% for v in villages %}
+      <option value="{{ v._id }}">{{ v.village }}</option>
+    {% endfor %}
+  </select>
+</div>
+            <div class="col-md-6">
+              <label class="form-label">Application ID</label>
+              <input type="text" class="form-control" name="application_id">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Customer ID (PDF/Image) *</label>
+              <input type="file" class="form-control" name="customer_id_doc" accept="image/*,.pdf">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Recommendation Letter *</label>
+              <input type="file" class="form-control" name="recommendation_letter" accept="image/*,.pdf">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Wealth Assessment Form *</label>
+              <input type="file" class="form-control" name="wealth_assessment_form" accept="image/*,.pdf">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save Customer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Customers Table -->
+  <div class="table-responsive">
+    <table class="table table-secondary table-hover table-sm align-middle" style="font-size:0.8rem;">
+      <thead class="table-light">
+        <tr class="table-primary">
+          <th>Customer Name</th>
+          <th>Contact</th>
+          <th>Scheme</th>
+          <th>Village</th>
+          <th>Docs</th>
+          <th>Status</th>
+          <th>Balance</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in customers %}
+        <tr class="bg-dark-subtle my-1">
+          <td>{{ c.customer_name }}</td>
+          <td>{{ c.contact }}</td>
+          <td>{{ c.scheme }}</td>
+          <td>{{ c.village or '-' }}</td>
+<td>
+  {% if c.customer_id_doc or c.recommendation_letter or c.wealth_assessment_form %}
+    {% if c.customer_id_doc %}
+      <a href="{{ url_for('static', filename='uploads/' ~ c.customer_id_doc) }}" target="_blank">
+        {{ c.customer_id_doc[:5] }}{{ '...' if c.customer_id_doc|length > 5 else '' }}
+      </a>{% if c.recommendation_letter or c.wealth_assessment_form %}, {% endif %}
+    {% endif %}
+    {% if c.recommendation_letter %}
+      <a href="{{ url_for('static', filename='uploads/' ~ c.recommendation_letter) }}" target="_blank">
+        {{ c.recommendation_letter[:5] }}{{ '...' if c.recommendation_letter|length > 5 else '' }}
+      </a>{% if c.wealth_assessment_form %}, {% endif %}
+    {% endif %}
+    {% if c.wealth_assessment_form %}
+      <a href="{{ url_for('static', filename='uploads/' ~ c.wealth_assessment_form) }}" target="_blank">
+        {{ c.wealth_assessment_form[:5] }}{{ '...' if c.wealth_assessment_form|length > 5 else '' }}
+      </a>
+    {% endif %}
+  {% endif %}
+</td>
+          <td>{{ c.status or 'Pending' }}</td>
+          <td>{{ c.balance or '0' }}</td>
+          <td>
+            <div class="d-flex gap-1">
+              <!-- Edit Button -->
+              <button class="btn btn-outline-primary btn-sm p-1" data-bs-toggle="modal" data-bs-target="#editCustomerModal-{{ c._id }}">
+                <i class="bi bi-pencil fs-6"></i>
+              </button>
+
+              <!-- Delete Button -->
+              <button class="btn btn-outline-danger btn-sm p-1" data-bs-toggle="modal" data-bs-target="#deleteCustomerModal-{{ c._id }}">
+                <i class="bi bi-trash fs-6"></i>
+              </button>
+
+              <!-- Update Status Button -->
+              <button class="btn btn-outline-warning btn-sm p-1" data-bs-toggle="modal" data-bs-target="#updateStatusModal-{{ c._id }}">
+                <i class="bi bi-check-circle fs-6"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Edit Customer Modal -->
+        <div class="modal fade" id="editCustomerModal-{{ c._id }}" tabindex="-1">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <form method="POST" action="/edit-customer/{{ c._id }}">
+                <div class="modal-header">
+                  <h5 class="modal-title">Edit Customer - {{ c.customer_name }}</h5>
+                  <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label">Customer Name *</label>
+                    <input type="text" class="form-control" name="customer_name" value="{{ c.customer_name }}" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Contact *</label>
+                    <input type="text" class="form-control" name="contact" value="{{ c.contact }}" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Scheme *</label>
+                    <select class="form-select" name="scheme" required>
+                      <option value="">Select Scheme</option>
+                      {% for s in schemes %}
+                        <option value="{{ s }}" {% if c.scheme == s %}selected{% endif %}>{{ s }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Village</label>
+                    <select class="form-select" name="village">
+                      <option value="">Select Village</option>
+                      {% for v in villages %}
+                        <option value="{{ v }}" {% if c.village == v %}selected{% endif %}>{{ v }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  <button type="submit" class="btn btn-success">Update</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Delete Customer Modal -->
+        <div class="modal fade" id="deleteCustomerModal-{{ c._id }}" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <form method="POST" action="/delete-customer/{{ c._id }}">
+                <div class="modal-header">
+                  <h5 class="modal-title text-danger">Delete Customer</h5>
+                  <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                  Are you sure you want to delete <strong>{{ c.customer_name }}</strong>?
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  <button type="submit" class="btn btn-danger">Delete</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Update Status Modal -->
+        <div class="modal fade" id="updateStatusModal-{{ c._id }}" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <form method="POST" action="/update-customer-status/{{ c._id }}">
+                <div class="modal-header">
+                  <h5 class="modal-title">Update Status</h5>
+                  <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                  <label class="form-label">New Status</label>
+                  <select class="form-select" name="status" required>
+                    <option value="">Select</option>
+                    <option value="Pending" {% if c.status == "Pending" %}selected{% endif %}>Pending</option>
+                    <option value="Active" {% if c.status == "Active" %}selected{% endif %}>Active</option>
+                    <option value="Inactive" {% if c.status == "Inactive" %}selected{% endif %}>Inactive</option>
+                  </select>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  <button type="submit" class="btn btn-warning">Update</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
 
           </div>
         </div>
