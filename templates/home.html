@@ -46,6 +46,16 @@
                 <i class="bi bi-people-fill me-2"></i> Customers
               </button>
             </li>
+            <li class="nav-item mb-2">
+              <button class="nav-link text-white d-flex align-items-center" id="schemes-tab-btn" data-bs-toggle="pill" data-bs-target="#schemes-tab" type="button">
+                <i class="bi bi-diagram-3-fill me-2"></i> Schemes
+              </button>
+            </li>
+            <li class="nav-item mb-2">
+              <button class="nav-link text-white d-flex align-items-center" id="villages-tab-btn" data-bs-toggle="pill" data-bs-target="#villages-tab" type="button">
+                <i class="bi bi-geo-alt-fill me-2"></i> Villages
+              </button>
+            </li>
           </ul>
         </div>
         <div class="mt-3">
@@ -146,90 +156,118 @@
               </div>
             </div>
 
-            <!-- Umbrellas Tab -->
-            <div class="tab-pane fade" id="umbrellas-tab" role="tabpanel">
-              <div class="d-flex justify-content-between align-items-start mb-3">
-                <div>
-                  <h5 class="fw-bold mb-1">Umbrellas</h5>
-                  <p class="mb-0">Manage umbrella authorities</p>
-                </div>
-                <div>
-                  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUmbrellaModal">
-                    <i class="bi bi-plus-lg me-1"></i> Add Umbrella
-                  </button>
-                </div>
-              </div>
-
-              <div class="overflow-auto" style="max-height: 60vh;">
-                <div class="d-flex flex-column gap-2">
-                  {% for umbrella in umbrellas %}
-    <div class="card shadow-sm border border-secondary-subtle bg-dark-subtle mb-1">
-      <div class="card-body d-flex justify-content-between align-items-center py-2 px-2">
-        <h6 class="mb-0 fw-semibold text-truncate" style="max-width: 60%; font-size: 0.85rem;">
-          {{ umbrella.umbrella }}
-        </h6>
-        <div class="d-flex gap-1">
-          <button class="btn btn-outline-primary btn-sm p-1" data-bs-toggle="modal" data-bs-target="#editModal-{{ umbrella._id }}">
-            <i class="bi bi-pencil fs-6"></i>
-          </button>
-          <button class="btn btn-outline-danger btn-sm p-1" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ umbrella._id }}">
-            <i class="bi bi-trash fs-6"></i>
-          </button>
-        </div>
-      </div>
+<!-- Umbrellas Tab -->
+<div class="tab-pane fade" id="umbrellas-tab" role="tabpanel">
+  <div class="d-flex justify-content-between align-items-start mb-3">
+    <div>
+      <h5 class="fw-bold mb-1">Umbrellas</h5>
+      <p class="mb-0">Manage umbrella authorities</p>
     </div>
 
+    <div>
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUmbrellaModal">
+        <i class="bi bi-plus-lg me-1"></i> Add Umbrella
+      </button>
+    </div>
+  </div>
 
-                  <!-- Edit Modal -->
-                  <div class="modal fade" id="editModal-{{ umbrella._id }}" tabindex="-1" aria-labelledby="editModalLabel-{{ umbrella._id }}" aria-hidden="true">
-                    <div class="modal-dialog">
-                      <div class="modal-content">
-                        <form method="POST" action="{{ url_for('edit_umbrella') }}">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="editModalLabel-{{ umbrella._id }}">Edit Umbrella</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                          </div>
-                          <div class="modal-body">
-                            <input type="hidden" name="umbrella_id" value="{{ umbrella._id }}">
-                            <div class="mb-3">
-                              <label for="umbrella_{{ umbrella._id }}" class="form-label">Umbrella Name</label>
-                              <input type="text" class="form-control" id="umbrella_{{ umbrella._id }}" name="umbrella" value="{{ umbrella.umbrella }}">
-                            </div>
-                          </div>
-                          <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Delete Modal -->
-                  <div class="modal fade" id="deleteModal-{{ umbrella._id }}" tabindex="-1" aria-labelledby="deleteModalLabel-{{ umbrella._id }}" aria-hidden="true">
-                    <div class="modal-dialog">
-                      <div class="modal-content">
-                        <form method="POST" action="{{ url_for('delete_umbrella') }}">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="deleteModalLabel-{{ umbrella._id }}">Delete Umbrella</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                          </div>
-                          <div class="modal-body">
-                            <input type="hidden" name="umbrella_id" value="{{ umbrella._id }}">
-                            <p>Are you sure you want to delete <strong>{{ umbrella.umbrella }}</strong>?</p>
-                          </div>
-                          <div class="modal-footer">
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-                  {% endfor %}
-                </div>
-              </div>
+    <!-- Add Umbrella Modal -->
+  <div class="modal fade" id="addUmbrellaModal" tabindex="-1" aria-labelledby="addUmbrellaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form method="POST" action="{{ url_for('add_umbrella') }}">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addUmbrellaModalLabel">Add New Umbrella</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="new_umbrella" class="form-label">Umbrella Name</label>
+              <input type="text" class="form-control" id="new_umbrella" name="umbrella" required>
             </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success">Add Umbrella</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+    <table class="table table-secondary table-hover table-sm align-middle" style="font-size:0.85rem;">
+      <thead class="table-light" style="position: sticky; top: 0; z-index: 2; background: #f8f9fa;">
+        <tr class="table-primary">
+          <th>Umbrella Name</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for umbrella in umbrellas %}
+        <tr class="bg-dark-subtle my-1">
+          <td class="fw-semibold text-truncate" style="max-width: 250px;">{{ umbrella.umbrella }}</td>
+          <td>
+            <div class="d-flex gap-1">
+              <button class="btn btn-outline-primary btn-sm p-1" data-bs-toggle="modal" data-bs-target="#editModal-{{ umbrella._id }}">
+                <i class="bi bi-pencil fs-6"></i>
+              </button>
+              <button class="btn btn-outline-danger btn-sm p-1" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ umbrella._id }}">
+                <i class="bi bi-trash fs-6"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        <!-- Edit Modal -->
+        <div class="modal fade" id="editModal-{{ umbrella._id }}" tabindex="-1" aria-labelledby="editModalLabel-{{ umbrella._id }}" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <form method="POST" action="{{ url_for('edit_umbrella') }}">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="editModalLabel-{{ umbrella._id }}">Edit Umbrella</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <input type="hidden" name="umbrella_id" value="{{ umbrella._id }}">
+                  <div class="mb-3">
+                    <label for="umbrella_{{ umbrella._id }}" class="form-label">Umbrella Name</label>
+                    <input type="text" class="form-control" id="umbrella_{{ umbrella._id }}" name="umbrella" value="{{ umbrella.umbrella }}">
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary">Save Changes</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <!-- Delete Modal -->
+        <div class="modal fade" id="deleteModal-{{ umbrella._id }}" tabindex="-1" aria-labelledby="deleteModalLabel-{{ umbrella._id }}" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <form method="POST" action="{{ url_for('delete_umbrella') }}">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="deleteModalLabel-{{ umbrella._id }}">Delete Umbrella</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <input type="hidden" name="umbrella_id" value="{{ umbrella._id }}">
+                  <p>Are you sure you want to delete <strong>{{ umbrella.umbrella }}</strong>?</p>
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-danger">Delete</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
 
 <!-- Users Tab -->
 <div class="tab-pane fade" id="users-tab" role="tabpanel" style="padding: 0.5rem;">
@@ -516,16 +554,18 @@
 
 
   <!-- Customers Table -->
-  <div class="table-responsive">
+  <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
     <table class="table table-secondary table-hover table-sm align-middle" style="font-size:0.8rem;">
-      <thead class="table-light">
+      <thead class="table-light" style="position: sticky; top: 0; z-index: 2; background: #f8f9fa;">
         <tr class="table-primary">
           <th>Customer Name</th>
+          <th>Type</th>
           <th>Contact</th>
           <th>Scheme</th>
           <th>Village</th>
           <th>Docs</th>
           <th>Status</th>
+          <th>Connection fee</th>
           <th>Balance</th>
           <th>Actions</th>
         </tr>
@@ -534,29 +574,38 @@
         {% for c in customers %}
         <tr class="bg-dark-subtle my-1">
           <td>{{ c.customer_name }}</td>
+          <td>{{ c.customer_type or '-' }}</td>
           <td>{{ c.contact }}</td>
           <td>{{ c.scheme }}</td>
           <td>{{ c.village or '-' }}</td>
 <td>
-  {% if c.customer_id_doc or c.recommendation_letter or c.wealth_assessment_form %}
+  {% if c.customer_id_doc or c.recommendation_letter or c.wealth_assessment_form or c.proof_of_payment %}
     {% if c.customer_id_doc %}
       <a href="{{ url_for('static', filename='uploads/' ~ c.customer_id_doc) }}" target="_blank">
         {{ c.customer_id_doc[:5] }}{{ '...' if c.customer_id_doc|length > 5 else '' }}
-      </a>{% if c.recommendation_letter or c.wealth_assessment_form %}, {% endif %}
+      </a>{% if c.recommendation_letter or c.wealth_assessment_form or c.proof_of_payment %}, {% endif %}
     {% endif %}
     {% if c.recommendation_letter %}
       <a href="{{ url_for('static', filename='uploads/' ~ c.recommendation_letter) }}" target="_blank">
         {{ c.recommendation_letter[:5] }}{{ '...' if c.recommendation_letter|length > 5 else '' }}
-      </a>{% if c.wealth_assessment_form %}, {% endif %}
+      </a>{% if c.wealth_assessment_form or c.proof_of_payment %}, {% endif %}
     {% endif %}
     {% if c.wealth_assessment_form %}
       <a href="{{ url_for('static', filename='uploads/' ~ c.wealth_assessment_form) }}" target="_blank">
         {{ c.wealth_assessment_form[:5] }}{{ '...' if c.wealth_assessment_form|length > 5 else '' }}
-      </a>
+      </a>{% if c.proof_of_payment %}, {% endif %}
     {% endif %}
+{% if c.proof_of_payment %}
+  {% for doc in c.proof_of_payment.split(',') %}
+    <a href="{{ url_for('static', filename='uploads/' ~ doc.strip()) }}" target="_blank">
+      {{ doc.strip()[:5] }}{{ '...' if doc.strip()|length > 5 else '' }}
+    </a>{% if not loop.last %}, {% endif %}
+  {% endfor %}
+{% endif %}
   {% endif %}
 </td>
-          <td>{{ c.status or 'Pending' }}</td>
+          <td>{{ c.status or 'N/A' }}</td>
+          <td>{{ c.amount_to_pay or 'N/A' }}</td>
           <td>{{ c.balance or '0' }}</td>
           <td>
             <div class="d-flex gap-1">
@@ -587,42 +636,115 @@
           <h5 class="modal-title">Edit Customer - {{ c.customer_name }}</h5>
           <button class="btn-close" data-bs-dismiss="modal"></button>
         </div>
-        <div class="modal-body row g-3">
+        <div class="modal-body">
           <input type="hidden" name="customer_id" value="{{ c._id }}">
-          <div class="col-md-6">
-            <label class="form-label">Customer Name *</label>
-            <input type="text" class="form-control" name="customer_name" value="{{ c.customer_name }}" required>
+          <div class="row g-4">
+            <div class="col-md-6">
+              <label class="form-label">Customer Name *</label>
+              <input type="text" class="form-control" name="customer_name" value="{{ c.customer_name }}" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Contact *</label>
+              <input type="text" class="form-control" name="contact" value="{{ c.contact }}" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Scheme *</label>
+              <select class="form-select" name="scheme_id" required>
+                <option value="">Select Scheme</option>
+                {% for s in schemes %}
+                  <option value="{{ s._id }}" {% if c.scheme_id|string == s._id|string %}selected{% endif %}>
+                    {{ s.scheme }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Village</label>
+              <select class="form-select" name="village_id">
+                <option value="">Select Village</option>
+                {% for v in villages %}
+                  <option value="{{ v._id }}" {% if c.village_id|string == v._id|string %}selected{% endif %}>
+                    {{ v.village }} ({{ v.district }})
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Application ID</label>
+              <input type="text" class="form-control" name="application_id" value="{{ c.application_id or '' }}">
+            </div>
           </div>
-          <div class="col-md-6">
-            <label class="form-label">Contact *</label>
-            <input type="text" class="form-control" name="contact" value="{{ c.contact }}" required>
+          {% if c.status == 'surveyed' %}
+          <hr class="my-4">
+          <div class="row g-4">
+            <div class="col-md-4">
+              <label class="form-label">Pipe Type</label>
+              <select class="form-select" name="pipe_type" required>
+                <option value="">Select Type</option>
+                <option value="HDPE" {% if c.pipe_type == "HDPE" or not c.pipe_type %}selected{% endif %}>HDPE</option>
+                <option value="PVC" {% if c.pipe_type == "PVC" %}selected{% endif %}>PVC</option>
+                <option value="GI" {% if c.pipe_type == "GI" %}selected{% endif %}>GI</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Pipe Nominal Diameter (mm)</label>
+              <input type="number" class="form-control" name="pipe_diameter" min="1" value="{{ c.pipe_diameter or 15 }}" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Pipe Length (meters)</label>
+              <input type="number" class="form-control" name="pipe_length" min="1" value="{{ c.pipe_length or '' }}" required>
+            </div>
           </div>
-          <div class="col-md-6">
-            <label class="form-label">Scheme *</label>
-            <select class="form-select" name="scheme_id" required>
-              <option value="">Select Scheme</option>
-              {% for s in schemes %}
-                <option value="{{ s._id }}" {% if c.scheme_id|string == s._id|string %}selected{% endif %}>
-                  {{ s.scheme }}
-                </option>
-              {% endfor %}
+          {% endif %}
+          {% if c.status == 'confirmed'%}
+          <hr class="my-4">
+          <div class="row g-4">
+            <div class="col-md-6">
+            <label class="form-label">New Status</label>
+            <select class="form-select mb-3" name="status" required>
+              <option value="surveyed" {% if c.status == "surveyed" or not c.status %}selected{% endif %}>Surveyed</option>
+              <option value="confirmed" {% if c.status == "confirmed" or not c.status  %}selected{% endif %}>Confirmed</option>
             </select>
+              <label class="form-label">Customer Type</label>
+              <select class="form-select mb-3" name="customer_type" required>
+                <option value="">Select Type</option>
+                <option value="MS" {% if c.customer_type == "MS" or not c.customer_type %}selected{% endif %}>MS</option>
+                <option value="ES" {% if c.customer_type == "ES" %}selected{% endif %}>ES</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Amount to Pay</label>
+              <input type="number" class="form-control mb-3" name="amount_to_pay" min="1" value="{{ c.amount_to_pay or '' }}" required>
+            </div>
           </div>
-          <div class="col-md-6">
-            <label class="form-label">Village</label>
-            <select class="form-select" name="village_id">
-              <option value="">Select Village</option>
-              {% for v in villages %}
-                <option value="{{ v._id }}" {% if c.village_id|string == v._id|string %}selected{% endif %}>
-                  {{ v.village }} ({{ v.district }})
-                </option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Application ID</label>
-            <input type="text" class="form-control" name="application_id" value="{{ c.application_id or '' }}">
-          </div>
+          {% endif %}
+          {% if c.status == 'paid' %}
+            <hr class="my-4">
+            <div class="row g-4">
+              <div class="col-md-6">
+                <label class="form-label">Status</label>
+                <select class="form-select mb-3" name="status" required>
+                  <option value="confirmed" {% if c.status == "confirmed" %}selected{% endif %}>Confirmed</option>
+                  <option value="paid" {% if c.status == "paid" or not c.status %}selected{% endif %}>Paid</option>
+                </select>
+                <label class="form-label">Amount Paid</label>
+                <input type="number" class="form-control mb-3" name="amount_paid" min="1" value="{{ c.amount_paid or '' }}" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Proof of Payment (optional)</label>
+                <input type="file" class="form-control mb-3" name="proof_of_payment" accept="image/*,.pdf">
+{% if c.proof_of_payment %}
+  <div class="mt-2">
+    {% for doc in c.proof_of_payment.split(',') %}
+      <a href="{{ url_for('static', filename='uploads/' ~ doc.strip()) }}" target="_blank">
+        View Proof: {{ doc.strip()[:5] }}{{ '...' if doc.strip()|length > 5 else '' }}
+      </a>{% if not loop.last %}<br>{% endif %}
+    {% endfor %}
+  </div>
+{% endif %}
+              </div>
+            </div>
+          {% endif %}
         </div>
         <div class="modal-footer">
           <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -632,7 +754,6 @@
     </div>
   </div>
 </div>
-
         <!-- Delete Customer Modal -->
         <div class="modal fade" id="deleteCustomerModal-{{ c._id }}" tabindex="-1">
           <div class="modal-dialog">
@@ -654,33 +775,367 @@
           </div>
         </div>
 
-        <!-- Update Status Modal -->
-        <div class="modal fade" id="updateStatusModal-{{ c._id }}" tabindex="-1">
+<!-- Update Status Modal -->
+{% if c.status == "applied" %}
+  <div class="modal fade" id="updateStatusModal-{{ c._id }}" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form method="POST" action="{{ url_for('update_customer_pipe') }}">
+          <input type="hidden" name="customer_id" value="{{ c._id }}">
+          <div class="modal-header">
+            <h5 class="modal-title">Update Pipe Details</h5>
+            <button class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <label class="form-label">Pipe Type</label>
+<label class="form-label">Pipe Type</label>
+<select class="form-select mb-2" name="pipe_type" required>
+  <option value="">Select Type</option>
+  <option value="HDPE" selected>HDPE</option>
+  <option value="PVC">PVC</option>
+  <option value="GI">GI</option>
+</select>
+<label class="form-label">Pipe Nominal Diameter (mm)</label>
+<input type="number" class="form-control mb-2" name="pipe_diameter" min="1" value="15" required>
+            <label class="form-label">Pipe Length (meters)</label>
+            <input type="number" class="form-control mb-2" name="pipe_length" min="1" required>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-warning">Update</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% elif c.status == "surveyed" %}
+  <div class="modal fade" id="updateStatusModal-{{ c._id }}" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form method="POST" action="{{ url_for('confirm_customer') }}">
+          <input type="hidden" name="customer_id" value="{{ c._id }}">
+          <div class="modal-header">
+            <h5 class="modal-title">Update Status</h5>
+            <button class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+<label class="form-label">New Status</label>
+<select class="form-select mb-3" name="status" required>
+  <option value="confirmed" selected>Confirmed</option>
+  <option value="surveyed">Surveyed</option>
+</select>
+            <label class="form-label">Customer Type</label>
+<select class="form-select mb-3" name="customer_type" required>
+  <option value="">Select Type</option>
+  <option value="MS" {% if c.customer_type == "MS" or not c.customer_type %}selected{% endif %}>MS</option>
+  <option value="ES" {% if c.customer_type == "ES" %}selected{% endif %}>ES</option>
+</select>
+            <label class="form-label">Amount to Pay</label>
+            <input type="number" class="form-control mb-3" name="amount_to_pay" min="1" value="{{ c.amount_to_pay or '' }}" required>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-warning">Update</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+{% elif c.status == "confirmed" or c.status == "paid" and c.customer_type == "MS" and c.balance != 0 %}
+  <div class="modal fade" id="updateStatusModal-{{ c._id }}" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form method="POST" enctype="multipart/form-data" action="{{ url_for('confirm_customer_payment') }}">
+          <input type="hidden" name="customer_id" value="{{ c._id }}">
+          <div class="modal-header">
+            <h5 class="modal-title">Update Status</h5>
+            <button class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <label class="form-label">Amount Paid</label>
+            <input type="number" class="form-control mb-3" name="amount_paid" min="1" value="" required>
+            <label class="form-label">Proof of Payment (optional)</label>
+            <input type="file" class="form-control mb-3" name="proof_of_payment" accept="image/*,.pdf">
+<label class="form-label">Status</label>
+<select class="form-select mb-3" name="status" required>
+  <option value="paid" selected>Paid</option>
+  <option value="confirmed">Confirmed</option>
+</select>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-warning">Update</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+{% elif c.status == "paid" or c.status == "connected" %}
+  <div class="modal fade" id="updateStatusModal-{{ c._id }}" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form method="POST" action="{{ url_for('confirm_customer_connection') }}">
+          <input type="hidden" name="customer_id" value="{{ c._id }}">
+          <div class="modal-header">
+            <h5 class="modal-title">Update Connection Status</h5>
+            <button class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <label class="form-label">Status</label>
+            <select class="form-select mb-3" name="status" required>
+              <option value="connected" selected>Connected</option>
+              <option value="paid" >Paid</option>
+            </select>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-success">Update</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- Schemes Tab Content -->
+<div class="tab-pane fade" id="schemes-tab" role="tabpanel">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="fw-bold mb-0">Schemes</h5>
+    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSchemeModal">
+      <i class="bi bi-plus-circle me-1"></i> Add New Scheme
+    </button>
+  </div>
+
+  <!-- Add Scheme Modal -->
+  <div class="modal fade" id="addSchemeModal" tabindex="-1" aria-labelledby="addSchemeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form method="POST" action="{{ url_for('add_scheme') }}">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addSchemeModalLabel">Add New Scheme</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Scheme Name</label>
+              <input type="text" class="form-control" name="scheme" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success">Add Scheme</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Schemes Table -->
+  <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+    <table class="table table-secondary table-hover table-sm align-middle" style="font-size:0.8rem; margin-bottom:0;">
+      <thead class="table-light" style="position: sticky; top: 0; z-index: 2; background: #f8f9fa;">
+        <tr class="table-primary">
+          <th>Scheme</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in schemes %}
+        <tr class="bg-dark-subtle my-1">
+          <td>{{ s.scheme }}</td>
+          <td>
+            <div class="d-flex gap-1">
+              <button class="btn btn-outline-primary btn-sm p-1" data-bs-toggle="modal" data-bs-target="#editSchemeModal-{{ s._id }}">
+                <i class="bi bi-pencil fs-6"></i>
+              </button>
+              <button class="btn btn-outline-danger btn-sm p-1" data-bs-toggle="modal" data-bs-target="#deleteSchemeModal-{{ s._id }}">
+                <i class="bi bi-trash fs-6"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Edit Scheme Modal -->
+        <div class="modal fade" id="editSchemeModal-{{ s._id }}" tabindex="-1">
           <div class="modal-dialog">
             <div class="modal-content">
-              <form method="POST" action="/update-customer-status/{{ c._id }}">
+              <form method="POST" action="{{ url_for('edit_scheme') }}">
+                <input type="hidden" name="scheme_id" value="{{ s._id }}">
                 <div class="modal-header">
-                  <h5 class="modal-title">Update Status</h5>
-                  <button class="btn-close" data-bs-dismiss="modal"></button>
+                  <h5 class="modal-title">Edit Scheme</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                  <label class="form-label">New Status</label>
-                  <select class="form-select" name="status" required>
-                    <option value="">Select</option>
-                    <option value="Pending" {% if c.status == "Pending" %}selected{% endif %}>Pending</option>
-                    <option value="Active" {% if c.status == "Active" %}selected{% endif %}>Active</option>
-                    <option value="Inactive" {% if c.status == "Inactive" %}selected{% endif %}>Inactive</option>
-                  </select>
+                  <div class="mb-3">
+                    <label class="form-label">Scheme Name</label>
+                    <input type="text" class="form-control" name="scheme" value="{{ s.scheme }}" required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <input type="text" class="form-control" name="description" value="{{ s.description }}" required>
+                  </div>
                 </div>
                 <div class="modal-footer">
-                  <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                  <button type="submit" class="btn btn-warning">Update</button>
+                  <button type="submit" class="btn btn-primary">Save Changes</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </div>
               </form>
             </div>
           </div>
         </div>
 
+        <!-- Delete Scheme Modal -->
+        <div class="modal fade" id="deleteSchemeModal-{{ s._id }}" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <form method="POST" action="{{ url_for('delete_scheme') }}">
+                <input type="hidden" name="scheme_id" value="{{ s._id }}">
+                <div class="modal-header">
+                  <h5 class="modal-title text-danger">Delete Scheme</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                  Are you sure you want to delete <strong>{{ s.scheme }}</strong>?
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-danger">Delete</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- Villages Tab Content -->
+<div class="tab-pane fade" id="villages-tab" role="tabpanel">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="fw-bold mb-0">Villages</h5>
+    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addVillageModal">
+      <i class="bi bi-plus-circle me-1"></i> Add New Village
+    </button>
+  </div>
+
+  <!-- Add Village Modal -->
+  <div class="modal fade" id="addVillageModal" tabindex="-1" aria-labelledby="addVillageModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form method="POST" action="{{ url_for('add_village') }}">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addVillageModalLabel">Add New Village</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Village Name</label>
+              <input type="text" class="form-control" name="village" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">District</label>
+              <input type="text" class="form-control" name="district" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success">Add Village</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Villages Table -->
+  <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+    <table class="table table-secondary table-hover table-sm align-middle" style="font-size:0.8rem;">
+      <thead class="table-light" style="position: sticky; top: 0; z-index: 2; background: #f8f9fa;">
+        <tr class="table-primary">
+          <th>Village</th>
+          <th>District</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for v in villages %}
+        <tr class="bg-dark-subtle my-1">
+          <td>{{ v.village }}</td>
+          <td>{{ v.district }}</td>
+          <td>
+            <div class="d-flex gap-1">
+              <button class="btn btn-outline-primary btn-sm p-1" data-bs-toggle="modal" data-bs-target="#editVillageModal-{{ v._id }}">
+                <i class="bi bi-pencil fs-6"></i>
+              </button>
+              <button class="btn btn-outline-danger btn-sm p-1" data-bs-toggle="modal" data-bs-target="#deleteVillageModal-{{ v._id }}">
+                <i class="bi bi-trash fs-6"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Edit Village Modal -->
+        <div class="modal fade" id="editVillageModal-{{ v._id }}" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <form method="POST" action="{{ url_for('edit_village') }}">
+                <input type="hidden" name="village_id" value="{{ v._id }}">
+                <div class="modal-header">
+                  <h5 class="modal-title">Edit Village</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="mb-3">
+                    <label class="form-label">Village Name</label>
+                    <input type="text" class="form-control" name="village" value="{{ v.village }}" required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">District</label>
+                    <input type="text" class="form-control" name="district" value="{{ v.district }}" required>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary">Save Changes</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Delete Village Modal -->
+        <div class="modal fade" id="deleteVillageModal-{{ v._id }}" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <form method="POST" action="{{ url_for('delete_village') }}">
+                <input type="hidden" name="village_id" value="{{ v._id }}">
+                <div class="modal-header">
+                  <h5 class="modal-title text-danger">Delete Village</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                  Are you sure you want to delete <strong>{{ v.village }}</strong>?
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-danger">Delete</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
         {% endfor %}
       </tbody>
     </table>
@@ -785,30 +1240,6 @@
   </div>
 </div>
 
-
-  <!-- Add Umbrella Modal -->
-  <div class="modal fade" id="addUmbrellaModal" tabindex="-1" aria-labelledby="addUmbrellaModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <form method="POST" action="{{ url_for('add_umbrella') }}">
-          <div class="modal-header">
-            <h5 class="modal-title" id="addUmbrellaModalLabel">Add New Umbrella</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <div class="mb-3">
-              <label for="new_umbrella" class="form-label">Umbrella Name</label>
-              <input type="text" class="form-control" id="new_umbrella" name="umbrella" required>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="submit" class="btn btn-success">Add Umbrella</button>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {

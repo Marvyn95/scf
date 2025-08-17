@@ -1,4 +1,3 @@
-
 from __init__ import app, db, bcrypt
 from flask import render_template, flash, request, url_for, session, redirect, send_file
 import json
@@ -137,8 +136,8 @@ def edit_umbrella():
 @app.route('/delete_umbrella', methods=["POST"])
 def delete_umbrella():
     form_info = request.form
-    existing_users = list(db.Users.find({"umbrella_id": ObjectId(form_info['umbrella_id'])}))
-    if len(existing_users) != 0:
+    existing_users = list(db.Users.find({"umbrella_id": form_info['umbrella_id']}))
+    if len(existing_users) > 0:
         flash('umbrella has registered employees!', 'danger')
         return redirect(url_for("home"))
     db.Umbrellas.delete_one({"_id": ObjectId(form_info['umbrella_id'])})
@@ -272,14 +271,39 @@ def add_customer():
 def edit_customer():
     form_info = request.form
 
+    update_fields = {
+        "customer_name": form_info['customer_name'],
+        "contact": form_info['contact'],
+        "scheme_id": form_info['scheme_id'],
+        "village_id": form_info['village_id'],
+        "application_id": form_info['application_id']
+    }
+
+    customer = db.Customers.find_one({"_id": ObjectId(form_info['customer_id'])})
+
+    if 'pipe_type' in form_info and 'pipe_diameter' in form_info and 'pipe_length' in form_info:
+        update_fields["pipe_type"] = form_info['pipe_type']
+        update_fields["pipe_diameter"] = int(form_info['pipe_diameter'])
+        update_fields["pipe_length"] = int(form_info['pipe_length'])
+
+    if 'amount_to_pay' in form_info and 'customer_type' in form_info:
+        update_fields['amount_to_pay'] = float(form_info['amount_to_pay'])
+        update_fields['balance'] = float(form_info.get('amount_to_pay', 0)) - float(form_info.get('amount_paid', 0))
+        update_fields['customer_type'] = form_info['customer_type']
+
+    if 'amount_paid' in form_info and 'proof_of_payment' in form_info:
+        update_fields['amount_paid'] = form_info['amount_paid']
+        update_fields['balance'] = float(customer.get('amount_to_pay', 0)) - float(form_info['amount_paid'])
+    
+    if 'proof_of_payment' in request.files and request.files['proof_of_payment'].filename:
+        proof_file = request.files['proof_of_payment']
+        update_fields['proof_of_payment'] = save_file(proof_file)
+
+    if 'status' in form_info:
+        update_fields['status'] = form_info['status']
+
     db.Customers.update_one({"_id": ObjectId(form_info['customer_id'])}, {
-        "$set": {
-            "customer_name": form_info['customer_name'],
-            "contact": form_info['contact'],
-            "scheme_id": form_info['scheme_id'],
-            "village_id": form_info['village_id'],
-            "application_id": form_info['application_id']
-        }
+        "$set": update_fields
     })
     flash('customer updated successfully!', 'success')
     return redirect(url_for("home"))
@@ -291,4 +315,158 @@ def delete_customer():
         "_id": ObjectId(form_info['customer_id'])
     })
     flash('customer deleted successfully!', 'success')
+    return redirect(url_for("home"))
+
+
+@app.route('/update_customer_pipe', methods=["POST"])
+def update_customer_pipe():
+    form_info = request.form
+    db.Customers.update_one({"_id": ObjectId(form_info['customer_id'])}, {
+        "$set": {
+            "pipe_type": form_info['pipe_type'],
+            "pipe_diameter": int(form_info['pipe_diameter']),
+            "pipe_length": int(form_info['pipe_length']),
+            "status": 'surveyed'
+        }
+    })
+    flash('Pipe details updated successfully!', 'success')
+    return redirect(url_for("home"))
+
+
+
+@app.route('/confirm_customer', methods=["POST"])
+def confirm_customer():
+    form_info = request.form
+    db.Customers.update_one({"_id": ObjectId(form_info['customer_id'])}, {
+        "$set": {
+            "status": form_info['status'],
+            "customer_type": form_info['customer_type'],
+            "amount_to_pay": float(form_info['amount_to_pay']),
+            "balance": float(form_info['amount_to_pay'])
+        }
+    })
+    flash('Customer confirmation status updated successfully!', 'success')
+    return redirect(url_for("home"))
+
+
+@app.route('/confirm_customer_payment', methods=["POST"])
+def confirm_customer_payment():
+    form_info = request.form
+    proof_file = request.files.get('proof_of_payment')
+    
+    customer = db.Customers.find_one({"_id": ObjectId(form_info['customer_id'])})
+
+    update_fields = {
+        "status": form_info['status'],
+        "amount_paid": float(float(form_info['amount_paid']) + float(customer.get('amount_paid', 0))),
+        "balance": float(customer.get('amount_to_pay', 0)) - (float(form_info['amount_paid']) + float(customer.get('amount_paid', 0)))
+    }
+    
+    if proof_file and proof_file.filename:
+        existing_proofs = customer.get('proof_of_payment', '').strip()
+        new_proof = save_file(proof_file)
+        if existing_proofs:
+            update_fields["proof_of_payment"] = existing_proofs + ',' + new_proof
+        else:
+            update_fields["proof_of_payment"] = new_proof
+
+    db.Customers.update_one({"_id": ObjectId(form_info['customer_id'])}, {
+        "$set": update_fields
+    })
+    flash('Customer payment status updated successfully!', 'success')
+    return redirect(url_for("home"))
+
+
+
+@app.route('/confirm_customer_connection', methods=["POST"])
+def confirm_customer_connection():
+    form_info = request.form
+    db.Customers.update_one({"_id": ObjectId(form_info['customer_id'])}, {
+        "$set": {
+            "status": form_info['status'],
+            "connection_date": datetime.datetime.now()
+        }
+    })
+
+    flash('Customer connection status updated successfully!', 'success')
+    return redirect(url_for("home"))
+
+
+
+@app.route('/add_village', methods=["POST"])
+def add_village():
+    form_info = request.form
+    db.Villages.insert_one({
+        "village": form_info['village'].strip(),
+        "district": form_info['district'].strip()
+    })
+    flash('Village added successfully!', 'success')
+    return redirect(url_for("home"))
+
+
+@app.route('/edit_village', methods=["POST"])
+def edit_village():
+    form_info = request.form
+    db.Villages.update_one({"_id": ObjectId(form_info['village_id'])}, {
+        "$set": {
+            "village": form_info['village'].strip(),
+            "district": form_info['district'].strip()
+        }
+    })
+    flash('Village updated successfully!', 'success')
+    return redirect(url_for("home"))
+
+
+@app.route('/delete_village', methods=["POST"])
+def delete_village():
+    form_info = request.form
+
+    customers = list(db.Customers.find({"village_id": form_info['village_id']}))
+    if len(customers) > 0:
+        flash('Village has registered customers!', 'danger')
+        return redirect(url_for("home"))
+
+    db.Villages.delete_one({"_id": form_info['village_id']})
+    flash('Village deleted successfully!', 'success')
+    return redirect(url_for("home"))
+
+
+
+@app.route('/add_scheme', methods=["POST"])
+def add_scheme():
+    form_info = request.form
+    db.Schemes.insert_one({
+        "scheme": form_info['scheme'].strip(),
+    })
+    flash('Scheme added successfully!', 'success')
+    return redirect(url_for("home"))
+
+
+@app.route('/edit_scheme', methods=["POST"])
+def edit_scheme():
+    form_info = request.form
+    db.Schemes.update_one({"_id": ObjectId(form_info['scheme_id'])}, {
+        "$set": {
+            "scheme": form_info['scheme'].strip(),
+        }
+    })
+    flash('Scheme updated successfully!', 'success')
+    return redirect(url_for("home"))
+
+@app.route('/delete_scheme', methods=["POST"])
+def delete_scheme():
+    form_info = request.form
+
+    existing_customers = list(db.Customers.find({"scheme_id": form_info['scheme_id']}))
+    if len(existing_customers) > 0:
+        flash('Scheme has registered customers!', 'danger')
+        return redirect(url_for("home"))
+
+    existing_users = list(db.Users.find({"scheme_id": form_info['scheme_id']}))
+    if len(existing_users) > 0:
+        flash('Scheme has registered users!', 'danger')
+        return redirect(url_for("home"))
+
+    db.Schemes.delete_one({"_id": ObjectId(form_info['scheme_id'])})
+    flash('Scheme deleted successfully!', 'success')
     return redirect(url_for("home"))
