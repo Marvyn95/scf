@@ -15,11 +15,13 @@ def home():
     schemes = list(db.Schemes.find())
     villages = list(db.Villages.find({}, {"village": 1, "district": 1}))
     customers = list(db.Customers.find())
+    areas = list(db.Areas.find())
 
     # adding schemes and umbrellas if exists
     for k in users:
         k['umbrella'] = db.Umbrellas.find_one({'_id': ObjectId(k['umbrella_id'])})['umbrella'] if k.get('umbrella_id') else None
         k['scheme'] = db.Schemes.find_one({'_id': ObjectId(k['scheme_id'])})['scheme'] if k.get('scheme_id') else None
+        k['area'] = db.Areas.find_one({'_id': ObjectId(k['area_id'])})['area'] if k.get('area_id') else None
 
     user['umbrella'] = db.Umbrellas.find_one({'_id': ObjectId(user['umbrella_id'])})['umbrella'] if user.get('umbrella_id') != "" else None
 
@@ -36,6 +38,7 @@ def home():
                            users = users,
                            villages = villages,
                            customers = customers,
+                           areas = areas,
                            date = datetime.datetime.today())
 
 
@@ -159,10 +162,14 @@ def update_profile():
         "$set": {"first_name": form_info["first_name"].strip(),
                 "last_name": form_info["last_name"].strip(),
                 "email": form_info["email"].strip(),
-                "umbrella_id": form_info["umbrella_id"].strip()}
+                "umbrella_id": form_info["umbrella_id"].strip(),
+                "role": form_info["role"].strip()
+                }
+                
     })
     flash('profile update successful!', 'success')
     return redirect(url_for("home"))
+
 
 @app.route('/change_password', methods=["POST"])
 def change_password():
@@ -192,6 +199,7 @@ def add_user():
         "password": bcrypt.generate_password_hash(form_info["password"].strip()).decode("utf-8"),
         "role": form_info['role'],
         "umbrella_id": form_info['umbrella_id'],
+        "area_id": form_info['area_id'],
         "scheme_id": form_info['scheme_id'],
         "active_status": True
     })
@@ -214,6 +222,7 @@ def update_user():
                 "email": form_info["email"].strip(),
                 "role": form_info['role'],
                 "umbrella_id": form_info["umbrella_id"].strip(),
+                "area_id": form_info["area_id"].strip(),
                 "scheme_id": form_info["scheme_id"].strip()
                 }
     })
@@ -311,6 +320,12 @@ def edit_customer():
 @app.route('/delete_customer', methods=["POST"])
 def delete_customer():
     form_info = request.form
+
+    customer = db.Customers.find_one({"_id": ObjectId(form_info['customer_id'])})
+    if customer.status == "paid" or customer.status == "connected":
+        flash('Cannot delete customer who has paid or is connected!', 'danger')
+        return redirect(url_for("home"))
+
     db.Customers.delete_one({
         "_id": ObjectId(form_info['customer_id'])
     })
@@ -469,4 +484,45 @@ def delete_scheme():
 
     db.Schemes.delete_one({"_id": ObjectId(form_info['scheme_id'])})
     flash('Scheme deleted successfully!', 'success')
+    return redirect(url_for("home"))
+
+
+
+@app.route('/add_area', methods=["POST"])
+def add_area():
+    form_info = request.form
+    db.Areas.insert_one({
+        "area": form_info['area'].strip(),
+    })
+    flash('Area added successfully!', 'success')
+    return redirect(url_for("home"))
+
+
+@app.route('/edit_area', methods=["POST"])
+def edit_area():
+    form_info = request.form
+    db.Areas.update_one({"_id": ObjectId(form_info['area_id'])}, {
+        "$set": {
+            "area": form_info['area'].strip(),
+        }
+    })
+    flash('Area updated successfully!', 'success')
+    return redirect(url_for("home"))
+
+@app.route('/delete_area', methods=["POST"])
+def delete_area():
+    form_info = request.form
+
+    existing_customers = list(db.Customers.find({"area_id": form_info['area_id']}))
+    if len(existing_customers) > 0:
+        flash('Area has registered customers!', 'danger')
+        return redirect(url_for("home"))
+
+    existing_users = list(db.Users.find({"area_id": form_info['area_id']}))
+    if len(existing_users) > 0:
+        flash('Area has registered users!', 'danger')
+        return redirect(url_for("home"))
+
+    db.Areas.delete_one({"_id": ObjectId(form_info['area_id'])})
+    flash('Area deleted successfully!', 'success')
     return redirect(url_for("home"))

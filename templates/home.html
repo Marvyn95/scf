@@ -52,6 +52,11 @@
               </button>
             </li>
             <li class="nav-item mb-2">
+              <button class="nav-link text-white d-flex align-items-center" id="areas-tab-btn" data-bs-toggle="pill" data-bs-target="#areas-tab" type="button">
+                <i class="bi bi-map-fill me-2"></i> Areas
+              </button>
+            </li>
+            <li class="nav-item mb-2">
               <button class="nav-link text-white d-flex align-items-center" id="villages-tab-btn" data-bs-toggle="pill" data-bs-target="#villages-tab" type="button">
                 <i class="bi bi-geo-alt-fill me-2"></i> Villages
               </button>
@@ -107,43 +112,143 @@
         <div class="card flex-grow-1 shadow-sm p-3 rounded-4 bg-secondary-subtle">
           <div class="tab-content h-100">
 
-            <!-- Home Tab -->
-            <div class="tab-pane fade show active" id="home-tab" role="tabpanel">
-              <h5 class="fw-bold mb-3">Home</h5>
-              <p>Welcome to the SCF System Dashboard. This is the home tab content.</p>
-            </div>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="mb-3" id="flashed-messages">
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show py-1 small" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    </div>
+    <script>
+      setTimeout(function() {
+        document.querySelectorAll('#flashed-messages .alert').forEach(function(alert) {
+          alert.classList.remove('show');
+          alert.classList.add('hide');
+          setTimeout(function() {
+            alert.parentNode.removeChild(alert);
+          }, 500); // Wait for fade out animation
+        });
+      }, 3000);
+    </script>
+  {% endif %}
+{% endwith %}
 
-            <!-- Profile Tab -->
-            <div class="tab-pane fade" id="profile-tab" role="tabpanel">
-              <h5 class="fw-bold mb-3">Profile</h5>
 
-              <!-- User Details List -->
-              <ul class="list-group mb-4">
-                <li class="list-group-item d-flex justify-content-between align-items-center py-2 bg-dark-subtle my-1 rounded-2">
-                  <div class="d-flex flex-column gap-1">
-                    <div class="fw-bold text-dark">First Name:</div>
-                    <div class="text-primary">{{ user.first_name }}</div>
-                  </div>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center py-2 bg-dark-subtle my-1 rounded-2">
-                  <div class="d-flex flex-column gap-1">
-                    <div class="fw-bold text-dark">Last Name:</div>
-                    <div class="text-primary">{{ user.last_name }}</div>
-                  </div>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center py-2 bg-dark-subtle my-1 rounded-2">
-                  <div class="d-flex flex-column gap-1">
-                    <div class="fw-bold text-dark">Email:</div>
-                    <div class="text-primary">{{ user.email }}</div>
-                  </div>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center py-2 bg-dark-subtle my-1 rounded-2">
-                  <div class="d-flex flex-column gap-1">
-                    <div class="fw-bold text-dark">Role:</div>
-                    <div class="text-primary">{{ user.role }}</div>
-                  </div>
-                </li>
-              </ul>
+<!-- Home Tab -->
+<div class="tab-pane fade show active h-100" id="home-tab" role="tabpanel">
+  <h5 class="fw-bold mb-3">Home</h5>
+  <p>Welcome to the SCF System Dashboard. Below are some key metrics:</p>
+
+  <div class="row g-4 mb-4">
+    <div class="col-md-3 col-6">
+      <div class="card shadow-sm border-0 bg-primary-subtle text-primary text-center py-3">
+        <div class="fw-bold fs-3">1,250</div>
+        <div class="small">Total Customers</div>
+      </div>
+    </div>
+    <div class="col-md-3 col-6">
+      <div class="card shadow-sm border-0 bg-success-subtle text-success text-center py-3">
+        <div class="fw-bold fs-3">980</div>
+        <div class="small">Connected Customers</div>
+      </div>
+    </div>
+    <div class="col-md-3 col-6">
+      <div class="card shadow-sm border-0 bg-warning-subtle text-warning text-center py-3">
+        <div class="fw-bold fs-3">210</div>
+        <div class="small">Paid, Pending Connection</div>
+      </div>
+    </div>
+    <div class="col-md-3 col-6">
+      <div class="card shadow-sm border-0 bg-info-subtle text-info text-center py-3">
+        <div class="fw-bold fs-3">15</div>
+        <div class="small">Total Schemes</div>
+      </div>
+    </div>
+    <div class="col-md-3 col-6">
+      <div class="card shadow-sm border-0 bg-secondary-subtle text-secondary text-center py-3">
+        <div class="fw-bold fs-3">8</div>
+        <div class="small">Total Areas</div>
+      </div>
+    </div>
+    <div class="col-md-3 col-6">
+      <div class="card shadow-sm border-0 bg-dark-subtle text-dark text-center py-3">
+        <div class="fw-bold fs-3">22</div>
+        <div class="small">Total Umbrellas</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Simple Bar Graphs (Bootstrap Progress) -->
+  <div class="row g-4">
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm p-3">
+        <div class="fw-bold mb-2">Customer Connection Progress</div>
+        <div class="mb-2 small">Connected: 78%</div>
+        <div class="progress mb-3" style="height: 1.5rem;">
+          <div class="progress-bar bg-success" style="width: 78%;">78%</div>
+        </div>
+        <div class="mb-2 small">Paid, Pending: 17%</div>
+        <div class="progress mb-3" style="height: 1.5rem;">
+          <div class="progress-bar bg-warning" style="width: 17%;">17%</div>
+        </div>
+        <div class="mb-2 small">Others: 5%</div>
+        <div class="progress" style="height: 1.5rem;">
+          <div class="progress-bar bg-secondary" style="width: 5%;">5%</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm p-3">
+        <div class="fw-bold mb-2">Schemes Distribution</div>
+        <div class="mb-2 small">Urban: 40%</div>
+        <div class="progress mb-3" style="height: 1.5rem;">
+          <div class="progress-bar bg-info" style="width: 40%;">40%</div>
+        </div>
+        <div class="mb-2 small">Rural: 60%</div>
+        <div class="progress" style="height: 1.5rem;">
+          <div class="progress-bar bg-primary" style="width: 60%;">60%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Profile Tab -->
+<div class="tab-pane fade" id="profile-tab" role="tabpanel">
+  <h5 class="fw-bold mb-3">Profile</h5>
+
+<!-- User Details List -->
+<div class="container-fluid px-0 h-100">
+  <ul class="list-group mb-4" style="max-width:100%; min-height:100%; height:100%;">
+    <li class="list-group-item py-2 bg-dark-subtle my-1 rounded-4 h-100 d-flex flex-column justify-content-between">
+      <div class="row mb-2">
+        <div class="col-6 col-md-3 fw-bold text-dark">First Name:</div>
+        <div class="col-6 col-md-3 text-primary text-truncate">{{ user.first_name }}</div>
+        <div class="col-6 col-md-3 fw-bold text-dark">Last Name:</div>
+        <div class="col-6 col-md-3 text-primary text-truncate">{{ user.last_name }}</div>
+      </div>
+      <div class="row mb-2">
+        <div class="col-6 col-md-3 fw-bold text-dark">Email:</div>
+        <div class="col-6 col-md-3 text-primary text-truncate">{{ user.email }}</div>
+        <div class="col-6 col-md-3 fw-bold text-dark">Role:</div>
+        <div class="col-6 col-md-3 text-primary text-truncate">{{ user.role }}</div>
+      </div>
+      <div class="row mb-2">
+        <div class="col-6 col-md-3 fw-bold text-dark">Umbrella:</div>
+        <div class="col-6 col-md-3 text-primary text-truncate">{{ user.umbrella if user.umbrella else 'None' }}</div>
+        <div class="col-6 col-md-3 fw-bold text-dark">Scheme:</div>
+        <div class="col-6 col-md-3 text-primary text-truncate">{{ user.scheme if user.scheme else 'None' }}</div>
+      </div>
+      <div class="row mb-2">
+        <div class="col-6 col-md-3 fw-bold text-dark">Area:</div>
+        <div class="col-6 col-md-3 text-primary text-truncate">{{ user.area if user.area else 'None' }}</div>
+      </div>
+    </li>
+  </ul>
+</div>
 
               <!-- Action Buttons -->
               <div class="d-flex justify-content-end gap-2">
@@ -289,6 +394,7 @@
           <th>Email</th>
           <th>Role</th>
           <th>Umbrella</th>
+          <th>Area</th>
           <th>Scheme</th>
           <th>Actions</th>
         </tr>
@@ -301,6 +407,7 @@
   <td>{{ u.email }}</td>
   <td>{{ u.role }}</td>
   <td>{{ u.umbrella or '-' }}</td>
+  <td>{{ u.area or '-' }}</td>
   <td>{{ u.scheme or '-' }}</td>
   <td>
     <div class="d-flex gap-1">
@@ -347,27 +454,35 @@
             <option value="me_officer" {% if u.role == 'me_officer' %}selected{% endif %}>M&E Officer</option>
           </select>
 
-<!-- Umbrella Authority -->
-<select name="umbrella_id" class="form-select mb-2">
-  <option value="" {% if not u.umbrella %}selected{% endif %}>Select Umbrella</option>
-  {% for umbrella in umbrellas %}
-    <option value="{{ umbrella._id }}" {% if u.umbrella_id|string == umbrella._id|string %}selected{% endif %}>
-      {{ umbrella.umbrella }}
-    </option>
-  {% endfor %}
-</select>
+          <!-- Umbrella Authority -->
+          <select name="umbrella_id" class="form-select mb-2">
+            <option value="" {% if not u.umbrella %}selected{% endif %}>Select Umbrella</option>
+            {% for umbrella in umbrellas %}
+              <option value="{{ umbrella._id }}" {% if u.umbrella_id|string == umbrella._id|string %}selected{% endif %}>
+                {{ umbrella.umbrella }}
+              </option>
+            {% endfor %}
+          </select>
 
-<!-- Scheme (optional) -->
-<select name="scheme_id" class="form-select mb-2">
-  <option value="" {% if not u.scheme %}selected{% endif %}>Select Scheme</option>
-  {% for scheme in schemes %}
-    <option value="{{ scheme._id }}" {% if u.scheme_id|string == scheme._id|string %}selected{% endif %}>
-      {{ scheme.scheme }}
-    </option>
-  {% endfor %}
-</select>
+          <!-- Area (optional) -->
+          <select name="area_id" class="form-select mb-2">
+            <option value="" {% if not u.area_id %}selected{% endif %}>Select Area</option>
+            {% for area in areas %}
+              <option value="{{ area._id }}" {% if u.area_id|string == area._id|string %}selected{% endif %}>
+                {{ area.area }}
+              </option>
+            {% endfor %}
+          </select>
 
-
+          <!-- Scheme (optional) -->
+          <select name="scheme_id" class="form-select mb-2">
+            <option value="" {% if not u.scheme %}selected{% endif %}>Select Scheme</option>
+            {% for scheme in schemes %}
+              <option value="{{ scheme._id }}" {% if u.scheme_id|string == scheme._id|string %}selected{% endif %}>
+                {{ scheme.scheme }}
+              </option>
+            {% endfor %}
+          </select>
         </div>
         <div class="modal-footer">
           <button type="submit" class="btn btn-primary">Save Changes</button>
@@ -459,6 +574,14 @@
             <option value="" selected disabled>Select Umbrella</option>
             {% for umbrella in umbrellas %}
               <option value="{{ umbrella._id }}">{{ umbrella.umbrella }}</option>
+            {% endfor %}
+          </select>
+
+          <!-- Area (optional) -->
+          <select name="area_id" class="form-select mb-2">
+            <option value="" selected>Select Area</option>
+            {% for area in areas %}
+              <option value="{{ area._id }}">{{ area.area }}</option>
             {% endfor %}
           </select>
 
@@ -1142,6 +1265,115 @@
   </div>
 </div>
 
+<!-- Areas Tab Content -->
+<div class="tab-pane fade" id="areas-tab" role="tabpanel">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="fw-bold mb-0">Areas</h5>
+    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addAreaModal">
+      <i class="bi bi-plus-circle me-1"></i> Add New Area
+    </button>
+  </div>
+
+  <!-- Add Area Modal -->
+  <div class="modal fade" id="addAreaModal" tabindex="-1" aria-labelledby="addAreaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form method="POST" action="{{ url_for('add_area') }}">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addAreaModalLabel">Add New Area</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Area Name</label>
+              <input type="text" class="form-control" name="area" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success">Add Area</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Areas Table -->
+  <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+    <table class="table table-secondary table-hover table-sm align-middle" style="font-size:0.8rem;">
+      <thead class="table-light" style="position: sticky; top: 0; z-index: 2; background: #f8f9fa;">
+        <tr class="table-primary">
+          <th>Area</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in areas %}
+        <tr class="bg-dark-subtle my-1">
+          <td>{{ a.area }}</td>
+          <td>
+            <div class="d-flex gap-1">
+              <button class="btn btn-outline-primary btn-sm p-1" data-bs-toggle="modal" data-bs-target="#editAreaModal-{{ a._id }}">
+                <i class="bi bi-pencil fs-6"></i>
+              </button>
+              <button class="btn btn-outline-danger btn-sm p-1" data-bs-toggle="modal" data-bs-target="#deleteAreaModal-{{ a._id }}">
+                <i class="bi bi-trash fs-6"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Edit Area Modal -->
+        <div class="modal fade" id="editAreaModal-{{ a._id }}" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <form method="POST" action="{{ url_for('edit_area') }}">
+                <input type="hidden" name="area_id" value="{{ a._id }}">
+                <div class="modal-header">
+                  <h5 class="modal-title">Edit Area</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="mb-3">
+                    <label class="form-label">Area Name</label>
+                    <input type="text" class="form-control" name="area" value="{{ a.area }}" required>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary">Save Changes</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Delete Area Modal -->
+        <div class="modal fade" id="deleteAreaModal-{{ a._id }}" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <form method="POST" action="{{ url_for('delete_area') }}">
+                <input type="hidden" name="area_id" value="{{ a._id }}">
+                <div class="modal-header">
+                  <h5 class="modal-title text-danger">Delete Area</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                  Are you sure you want to delete <strong>{{ a.area }}</strong>?
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-danger">Delete</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
 
           </div>
         </div>
@@ -1178,33 +1410,40 @@
           </div>
 
 <div class="mb-2">
-  <label class="form-label">Role</label>
-  <select name="role" class="form-select" required {% if user.role != 'admin' %}disabled{% endif %}>
-    <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
-    <option value="manager" {% if user.role == 'manager' %}selected{% endif %}>Manager</option>
-    <option value="cluster_manager" {% if user.role == 'cluster_manager' %}selected{% endif %}>Cluster Manager</option>
-    <option value="commercial_officer" {% if user.role == 'commercial_officer' %}selected{% endif %}>Commercial Officer</option>
-    <option value="billing_officer" {% if user.role == 'billing_officer' %}selected{% endif %}>Billing Officer</option>
-    <option value="project_officer" {% if user.role == 'project_officer' %}selected{% endif %}>Project Officer</option>
-    <option value="area_manager" {% if user.role == 'area_manager' %}selected{% endif %}>Area Manager</option>
-    <option value="scheme_manager" {% if user.role == 'scheme_manager' %}selected{% endif %}>Scheme Manager</option>
-    <option value="plumber" {% if user.role == 'plumber' %}selected{% endif %}>Plumber</option>
-    <option value="me_officer" {% if user.role == 'me_officer' %}selected{% endif %}>M&E Officer</option>
-  </select>
+  {% if user.role == 'admin' %}
+    <label class="form-label">Role</label>
+    <select name="role" class="form-select" {% if user.role == 'admin' %}disabled{% endif %} required>
+      <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+      <option value="manager" {% if user.role == 'manager' %}selected{% endif %}>Manager</option>
+      <option value="cluster_manager" {% if user.role == 'cluster_manager' %}selected{% endif %}>Cluster Manager</option>
+      <option value="commercial_officer" {% if user.role == 'commercial_officer' %}selected{% endif %}>Commercial Officer</option>
+      <option value="billing_officer" {% if user.role == 'billing_officer' %}selected{% endif %}>Billing Officer</option>
+      <option value="project_officer" {% if user.role == 'project_officer' %}selected{% endif %}>Project Officer</option>
+      <option value="area_manager" {% if user.role == 'area_manager' %}selected{% endif %}>Area Manager</option>
+      <option value="scheme_manager" {% if user.role == 'scheme_manager' %}selected{% endif %}>Scheme Manager</option>
+      <option value="plumber" {% if user.role == 'plumber' %}selected{% endif %}>Plumber</option>
+      <option value="me_officer" {% if user.role == 'me_officer' %}selected{% endif %}>M&E Officer</option>
+    </select>
+    <input type="hidden" name="role" value="{{ user.role }}">
+  {% else %}
+    <input type="hidden" name="role" value="{{ user.role }}">
+  {% endif %}
 </div>
 
-
 <div class="mb-2">
-  <label class="form-label">Umbrella Authority</label>
-  <select name="umbrella_id" class="form-select" required {% if user.role|string != 'admin' %}disabled{% endif %}>
-    <!-- Default option -->
-    <option value="" {% if not user.umbrella_id|string %}selected{% endif %}>Select Umbrella</option>
-    {% for umbrella in umbrellas %}
-      <option value="{{ umbrella._id }}" {% if user.umbrella_id|string == umbrella._id|string %}selected{% endif %}>
-        {{ umbrella.umbrella }}
-      </option>
-    {% endfor %}
-  </select>
+  {% if user.role|string == 'admin' %}
+    <label class="form-label">Umbrella Authority</label>
+    <select name="umbrella_id" class="form-select" required>
+      <option value="" {% if not user.umbrella_id|string %}selected{% endif %}>Select Umbrella</option>
+      {% for umbrella in umbrellas %}
+        <option value="{{ umbrella._id }}" {% if user.umbrella_id|string == umbrella._id|string %}selected{% endif %}>
+          {{ umbrella.umbrella }}
+        </option>
+      {% endfor %}
+    </select>
+  {% else %}
+    <input type="hidden" name="umbrella_id" value="{{ user.umbrella_id }}">
+  {% endif %}
 </div>
 
         </div>
